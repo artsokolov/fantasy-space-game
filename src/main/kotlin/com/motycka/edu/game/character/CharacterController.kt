@@ -25,27 +25,8 @@ class CharacterController(
         @RequestBody request: CreateCharacterRequest,
         @AuthenticationPrincipal user: AccountDetails
     ): ResponseEntity<Any> {
-        try {
-            val response = service.createCharacter(request)
+        val response = service.createCharacter(request, user.id)
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(response)
-        } catch (e: UnknownCharacterClass) {
-            val code = HttpStatus.UNPROCESSABLE_ENTITY
-            val response = ErrorResponse(
-                e.message ?: "",
-                code.value()
-            )
-
-            return ResponseEntity.status(code).body(response)
-        } catch (e: Throwable) {
-            val code = HttpStatus.INTERNAL_SERVER_ERROR
-
-            val response = ErrorResponse(
-                e.message ?: "",
-                code.value()
-            )
-
-            return ResponseEntity.status(code).body(response)
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 }

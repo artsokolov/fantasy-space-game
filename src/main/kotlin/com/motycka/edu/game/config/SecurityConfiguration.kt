@@ -8,6 +8,7 @@ import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -42,11 +43,13 @@ class SecurityConfiguration(private val userService: AccountService) {
         val user = userService.getByUsername(username)
             ?: throw UsernameNotFoundException("User not found")
 
-        User.builder()
-            .username(user.username)
-            .password(passwordEncoder().encode(user.password))
-            .roles("USER")
-            .build()
+
+        AccountDetails(
+            id = requireNotNull(user.id) { "" },
+            username = user.username,
+            password = passwordEncoder().encode(user.password),
+            authorities = listOf(GrantedAuthority { "USER" })
+        )
     }
 
 

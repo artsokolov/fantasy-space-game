@@ -1,5 +1,6 @@
 package com.motycka.edu.game.character
 
+import com.motycka.edu.game.account.model.AccountId
 import com.motycka.edu.game.character.exception.UnknownCharacterClass
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
 import com.motycka.edu.game.character.rest.response.CharacterResponse
@@ -15,9 +16,12 @@ class CharacterService(
 ) {
 
     @Throws(UnknownCharacterClass::class, DataException::class)
-    fun createCharacter(request: CreateCharacterRequest): CharacterResponse {
-        val character = factory.newCharacter(request)
+    fun createCharacter(
+        request: CreateCharacterRequest,
+        accountId: AccountId
+    ): CharacterResponse {
+        val character = factory.newCharacter(request, accountId)
 
-        return repository.create(character).toResponse()
+        return repository.create(character).toResponse(accountId)
     }
 }

@@ -1,5 +1,6 @@
 package com.motycka.edu.game.character
 
+import com.motycka.edu.game.account.model.AccountId
 import com.motycka.edu.game.character.exception.UnknownCharacterClass
 import com.motycka.edu.game.character.model.Character
 import com.motycka.edu.game.character.model.Sorcerer
@@ -12,7 +13,7 @@ import kotlin.jvm.Throws
 class CharacterFactory {
 
     @Throws(UnknownCharacterClass::class)
-    fun newCharacter(request: CreateCharacterRequest): Character {
+    fun newCharacter(request: CreateCharacterRequest, accountId: AccountId): Character {
         return when (request.characterClass) {
             "WARRIOR" -> Warrior(
                 name = request.name,
@@ -21,7 +22,8 @@ class CharacterFactory {
                 level = 1,
                 experience = 0,
                 stamina = requireNotNull(request.stamina) { "Stamina should be defined" },
-                defensePower = requireNotNull(request.defensePower) { "Defense power should be defined" }
+                defensePower = requireNotNull(request.defensePower) { "Defense power should be defined" },
+                accountId = accountId
             )
             "SORCERER" -> Sorcerer(
                 name = request.name,
@@ -30,9 +32,10 @@ class CharacterFactory {
                 level = 1,
                 experience = 0,
                 mana = requireNotNull(request.mana) { "Mana should not be null" },
-                healingPower = requireNotNull(request.healingPower) { "Healing power should not be null" }
+                healingPower = requireNotNull(request.healingPower) { "Healing power should not be null" },
+                accountId = accountId
             )
-            else -> throw UnknownCharacterClass()
+            else -> throw UnknownCharacterClass("Unknown character class: ${request.characterClass}")
         }
     }
 }
