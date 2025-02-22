@@ -2,11 +2,11 @@ package com.motycka.edu.game.character
 
 import com.motycka.edu.game.character.exception.UnknownCharacterClass
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
+import com.motycka.edu.game.config.AccountDetails
 import com.motycka.edu.game.error.ErrorResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.userdetails.User
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,7 +23,7 @@ class CharacterController(
     @PostMapping
     fun postCharacter(
         @RequestBody request: CreateCharacterRequest,
-        @AuthenticationPrincipal user: User
+        @AuthenticationPrincipal user: AccountDetails
     ): ResponseEntity<Any> {
         try {
             val response = service.createCharacter(request)
