@@ -22,6 +22,14 @@ class CharacterService(
     ): CharacterResponse {
         val character = factory.newCharacter(request, accountId)
 
-        return repository.create(character).toResponse(accountId)
+        return character.apply {
+            id = repository.create(character)
+        }.toResponse(accountId)
+    }
+
+    fun listCharacters(id: AccountId): List<CharacterResponse> {
+        return repository.all {
+            it.toResponse(id)
+        }
     }
 }

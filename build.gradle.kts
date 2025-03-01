@@ -1,4 +1,4 @@
-import org.gradle.kotlin.dsl.withType
+import org.jooq.meta.jaxb.*
 
 plugins {
     kotlin("jvm")
@@ -6,6 +6,12 @@ plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("idea")
+    id("application")
+    id("org.jooq.jooq-codegen-gradle") version "3.20.1"
+}
+
+application {
+    mainClass.set("com.motycka.edu.game.GameApplicationKt")
 }
 
 group = "com.motycka.edu"
@@ -42,8 +48,14 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     // implementation("org.springframework.boot:spring-boot-starter-webflux:3.4.2")
 
-    // runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("com.h2database:h2")
+    implementation("org.jooq:jooq:3.20.1")
+    implementation("org.jooq:jooq-meta:3.20.1")
+    implementation("org.jooq:jooq-codegen:3.20.1")
+    jooqCodegen("org.postgresql:postgresql")
+
+    runtimeOnly("org.postgresql:postgresql")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+//    runtimeOnly("com.h2database:h2")
 
     testImplementation(kotlin("test"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -58,5 +70,35 @@ tasks.withType<Test> {
         events("passed", "skipped", "failed")
         showStackTraces = true
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    }
+}
+
+jooq {
+    configuration {
+        jdbc {
+            driver = "org.postgresql.Driver"
+            url = "jdbc:postgresql://localhost:5432/mydatabase"
+            user = "user"
+            password = "password"
+        }
+
+        generator {
+            name = "org.jooq.codegen.KotlinGenerator"
+
+            database {
+                name = "org.jooq.meta.postgres.PostgresDatabase"
+                inputSchema = "public"
+            }
+
+            generate {
+                withDaos(false)
+                withPojos(false)
+            }
+
+            target {
+                packageName = "com.motycka.edu.game.generated"
+                directory = "src/main/kotlin"
+            }
+        }
     }
 }

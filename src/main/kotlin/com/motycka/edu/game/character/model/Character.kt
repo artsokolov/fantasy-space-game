@@ -1,17 +1,27 @@
 package com.motycka.edu.game.character.model
 
-import com.motycka.edu.game.account.model.AccountId
-
 abstract class Character(
     open var id: CharacterId?,
-    open val name: String,
-    open val accountId: AccountId,
-    open val health: Int,
-    open val attackPower: Int,
-    open val level: Int,
-    open val experience: Int,
-    open val mana: Int? = null,
-    open val healingPower: Int? = null,
-    open val stamina: Int? = null,
-    open val defensePower: Int? = null,
-)
+    open val properties: CharacterProperties
+) {
+    abstract val type: CharacterType
+
+    companion object {
+        fun new(
+            characterType: CharacterType,
+            properties: CharacterProperties,
+            id: CharacterId? = null
+        ): Character {
+            return when (characterType) {
+                CharacterType.WARRIOR -> Warrior(id, properties).apply {
+                    requireNotNull(properties.stamina) { "Stamina should be defined" }
+                    requireNotNull(properties.defensePower) { "Defense power should be defined" }
+                }
+                CharacterType.SORCERER -> Sorcerer(id, properties).apply {
+                    requireNotNull(properties.mana) { "Mana should not be null" }
+                    requireNotNull(properties.healingPower) { "Healing power should not be null" }
+                }
+            }
+        }
+    }
+}

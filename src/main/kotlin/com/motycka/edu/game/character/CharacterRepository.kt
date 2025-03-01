@@ -1,52 +1,35 @@
 package com.motycka.edu.game.character
 
+import com.motycka.edu.game.character.database.toRecord
 import com.motycka.edu.game.character.model.Character
 import org.jooq.DSLContext
 import org.jooq.exception.DataException
-import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
 import kotlin.jvm.Throws
+import com.motycka.edu.game.character.exception.CharacterCreationError
+import com.motycka.edu.game.character.model.CharacterId
+import com.motycka.edu.game.generated.tables.GameCharacter
 
 @Repository
 class CharacterRepository(
-    private val dsl: DSLContext
+    private val dsl: DSLContext,
+    private val factory: CharacterFactory
 ) {
 
     @Throws(DataException::class)
-    fun create(character: Character): Character {
-        dsl.insertInto(TABLE)
-            .columns(
-                DSL.field("account_id"),
-                DSL.field("name"),
-                DSL.field("class"),
-                DSL.field("health"),
-                DSL.field("attack"),
-                DSL.field("experience"),
-                DSL.field("defense"),
-                DSL.field("stamina"),
-                DSL.field("healing"),
-                DSL.field("mana"),
-            ).values(
-                character.accountId,
-                character.name,
-                character::class.toString().uppercase(),
-                character.health,
-                character.attackPower,
-                character.experience,
-                character.defensePower,
-                character.stamina,
-                character.healingPower,
-                character.mana
-            )
-            .returningResult(TABLE.field("id"))
-            .execute()
-
-        character.id = dsl.lastID().longValueExact()
-
-        return character
+    fun create(character: Character): CharacterId {
+        return dsl.insertInto(GameCharacter.GAME_CHARACTER)
+            .set(character.toRecord())
+            .returningResult(GameCharacter.GAME_CHARACTER.ID)
+            .fetchOne()
+            ?.into(Long::class.java) ?: throw CharacterCreationError("Error during character creation")
     }
 
-    companion object {
-        val TABLE = DSL.table("game_character")
+    fun <T>all(converter: (Character) -> T): List<T> {
+        return dsl.selectFrom(GameCharacter.GAME_CHARACTER).fetch { record ->
+            val character = factory.restoreCharacter(record)
+
+            converter(character)
+        }
     }
 }

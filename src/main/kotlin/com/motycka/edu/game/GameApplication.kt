@@ -1,4 +1,4 @@
-package com.motycka.edu
+package com.motycka.edu.game
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
