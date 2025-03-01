@@ -20,4 +20,14 @@ class HandlerAdvice {
             code.value()
         ))
     }
+
+    @ExceptionHandler(CharacterNotFoundException::class)
+    fun handleCharacterNotFound(e: CharacterNotFoundException): ResponseEntity<ErrorResponse> {
+        val code = HttpStatus.NOT_FOUND
+
+        return ResponseEntity.status(code).body(ErrorResponse(
+            e.message ?: "Unknown error",
+            code.value()
+        ))
+    }
 }

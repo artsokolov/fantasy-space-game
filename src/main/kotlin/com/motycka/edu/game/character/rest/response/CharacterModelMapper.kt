@@ -14,5 +14,6 @@ fun Character.toResponse(curAccountId: AccountId) = CharacterResponse(
     mana = properties.mana,
     healingPower = properties.healingPower,
     stamina = properties.stamina,
-    defensePower = properties.defensePower
+    defensePower = properties.defensePower,
+    characterClass = type
 )

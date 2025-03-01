@@ -1,17 +1,21 @@
 package com.motycka.edu.game.character
 
 import com.motycka.edu.game.character.exception.UnknownCharacterClass
+import com.motycka.edu.game.character.model.CharacterId
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
 import com.motycka.edu.game.config.AccountDetails
 import com.motycka.edu.game.error.ErrorResponse
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.lang.Nullable
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 /**
@@ -34,9 +38,21 @@ class CharacterController(
 
     @GetMapping
     fun getCharacters(
-        @AuthenticationPrincipal account: AccountDetails
+        @AuthenticationPrincipal account: AccountDetails,
+        @RequestParam @Nullable characterClass: String? = null,
+        @RequestParam @Nullable name: String? = null
     ): ResponseEntity<Any> {
-        val response = service.listCharacters(account.id)
+        val response = service.listCharacters(account.id, name, characterClass)
+
+        return ResponseEntity.status(HttpStatus.OK).body(response)
+    }
+
+    @GetMapping("/{id}")
+    fun getCharacter(
+        @AuthenticationPrincipal account: AccountDetails,
+        @PathVariable id: CharacterId
+    ): ResponseEntity<Any> {
+        val response = service.findCharacter(id, account.id)
 
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }

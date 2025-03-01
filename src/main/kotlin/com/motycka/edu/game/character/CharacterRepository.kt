@@ -7,6 +7,7 @@ import org.jooq.exception.DataException
 import org.springframework.stereotype.Repository
 import kotlin.jvm.Throws
 import com.motycka.edu.game.character.exception.CharacterCreationError
+import com.motycka.edu.game.character.exception.CharacterNotFoundException
 import com.motycka.edu.game.character.model.CharacterId
 import com.motycka.edu.game.generated.tables.GameCharacter
 
@@ -25,11 +26,27 @@ class CharacterRepository(
             ?.into(Long::class.java) ?: throw CharacterCreationError("Error during character creation")
     }
 
-    fun <T>all(converter: (Character) -> T): List<T> {
-        return dsl.selectFrom(GameCharacter.GAME_CHARACTER).fetch { record ->
-            val character = factory.restoreCharacter(record)
+    fun <T>all(
+        name: String?,
+        characterClass: String?,
+        converter: (Character) -> T
+    ): List<T> {
+        return dsl.selectFrom(GameCharacter.GAME_CHARACTER)
+            .where(
+                name?.let { GameCharacter.GAME_CHARACTER.NAME.eq(it) },
+                characterClass?.let { GameCharacter.GAME_CHARACTER.CLASS.eq(it) }
+            ).fetch { record ->
+                val character = factory.restoreCharacter(record)
 
-            converter(character)
-        }
+                converter(character)
+            }
+    }
+
+    fun find(id: CharacterId): Character {
+        return dsl.selectFrom(GameCharacter.GAME_CHARACTER)
+            .where(GameCharacter.GAME_CHARACTER.ID.eq(id))
+            .fetchOne()
+            ?.let { factory.restoreCharacter(it) }
+            ?: throw CharacterNotFoundException("Character with id $id not found")
     }
 }

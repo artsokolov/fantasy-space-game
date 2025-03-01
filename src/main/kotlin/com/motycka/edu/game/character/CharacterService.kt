@@ -2,6 +2,7 @@ package com.motycka.edu.game.character
 
 import com.motycka.edu.game.account.model.AccountId
 import com.motycka.edu.game.character.exception.UnknownCharacterClass
+import com.motycka.edu.game.character.model.CharacterId
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
 import com.motycka.edu.game.character.rest.response.CharacterResponse
 import com.motycka.edu.game.character.rest.response.toResponse
@@ -27,9 +28,17 @@ class CharacterService(
         }.toResponse(accountId)
     }
 
-    fun listCharacters(id: AccountId): List<CharacterResponse> {
-        return repository.all {
+    fun listCharacters(
+        id: AccountId,
+        name: String?,
+        characterClass: String?
+    ): List<CharacterResponse> {
+        return repository.all(name, characterClass) {
             it.toResponse(id)
         }
+    }
+
+    fun findCharacter(id: CharacterId, accountId: AccountId): CharacterResponse {
+        return repository.find(id).toResponse(accountId)
     }
 }
