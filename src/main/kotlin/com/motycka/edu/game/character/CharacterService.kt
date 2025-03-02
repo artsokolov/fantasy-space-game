@@ -6,6 +6,8 @@ import com.motycka.edu.game.character.model.CharacterId
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
 import com.motycka.edu.game.character.rest.response.CharacterResponse
 import com.motycka.edu.game.character.rest.response.toResponse
+import com.motycka.edu.game.generated.tables.GameCharacter
+import com.motycka.edu.game.shared.EqualsCriteria
 import org.jooq.exception.DataException
 import org.springframework.stereotype.Service
 import kotlin.jvm.Throws
@@ -33,12 +35,25 @@ class CharacterService(
         name: String?,
         characterClass: String?
     ): List<CharacterResponse> {
-        return repository.all(name, characterClass) {
+        // TODO("Make validation for name and characterClass")
+
+        return repository.findBy(
+            EqualsCriteria(GameCharacter.GAME_CHARACTER.NAME, name),
+            EqualsCriteria(GameCharacter.GAME_CHARACTER.CLASS, characterClass)
+        ) {
             it.toResponse(id)
         }
     }
 
     fun findCharacter(id: CharacterId, accountId: AccountId): CharacterResponse {
         return repository.find(id).toResponse(accountId)
+    }
+
+    fun findChallengers(accountId: AccountId): List<CharacterResponse> {
+        return repository.findBy(
+            EqualsCriteria(GameCharacter.GAME_CHARACTER.ACCOUNT_ID, accountId)
+        ) {
+            it.toResponse(accountId)
+        }
     }
 }

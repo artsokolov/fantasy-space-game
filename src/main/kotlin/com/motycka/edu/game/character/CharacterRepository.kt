@@ -10,6 +10,7 @@ import com.motycka.edu.game.character.exception.CharacterCreationError
 import com.motycka.edu.game.character.exception.CharacterNotFoundException
 import com.motycka.edu.game.character.model.CharacterId
 import com.motycka.edu.game.generated.tables.GameCharacter
+import com.motycka.edu.game.shared.Criteria
 
 @Repository
 class CharacterRepository(
@@ -26,15 +27,13 @@ class CharacterRepository(
             ?.into(Long::class.java) ?: throw CharacterCreationError("Error during character creation")
     }
 
-    fun <T>all(
-        name: String?,
-        characterClass: String?,
+    fun <T>findBy(
+        vararg filters: Criteria,
         converter: (Character) -> T
     ): List<T> {
         return dsl.selectFrom(GameCharacter.GAME_CHARACTER)
             .where(
-                name?.let { GameCharacter.GAME_CHARACTER.NAME.eq(it) },
-                characterClass?.let { GameCharacter.GAME_CHARACTER.CLASS.eq(it) }
+                filters.map { it.toCondition() }
             ).fetch { record ->
                 val character = factory.restoreCharacter(record)
 

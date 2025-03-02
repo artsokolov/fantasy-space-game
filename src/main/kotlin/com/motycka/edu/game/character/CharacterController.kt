@@ -1,11 +1,8 @@
 package com.motycka.edu.game.character
 
-import com.motycka.edu.game.character.exception.UnknownCharacterClass
 import com.motycka.edu.game.character.model.CharacterId
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
 import com.motycka.edu.game.config.AccountDetails
-import com.motycka.edu.game.error.ErrorResponse
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.lang.Nullable
@@ -53,6 +50,15 @@ class CharacterController(
         @PathVariable id: CharacterId
     ): ResponseEntity<Any> {
         val response = service.findCharacter(id, account.id)
+
+        return ResponseEntity.status(HttpStatus.OK).body(response)
+    }
+
+    @GetMapping("/challengers")
+    fun getChallengers(
+        @AuthenticationPrincipal account: AccountDetails
+    ): ResponseEntity<Any> {
+        val response = service.findChallengers(account.id)
 
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
