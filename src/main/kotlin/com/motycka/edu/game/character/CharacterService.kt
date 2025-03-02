@@ -8,6 +8,7 @@ import com.motycka.edu.game.character.rest.response.CharacterResponse
 import com.motycka.edu.game.character.rest.response.toResponse
 import com.motycka.edu.game.generated.tables.GameCharacter
 import com.motycka.edu.game.shared.EqualsCriteria
+import com.motycka.edu.game.shared.NotEqualsCriteria
 import org.jooq.exception.DataException
 import org.springframework.stereotype.Service
 import kotlin.jvm.Throws
@@ -55,5 +56,11 @@ class CharacterService(
         ) {
             it.toResponse(accountId)
         }
+    }
+
+    fun findOpponents(id: AccountId): List<CharacterResponse> {
+        return repository.findBy(
+            NotEqualsCriteria(GameCharacter.GAME_CHARACTER.ACCOUNT_ID, id)
+        ) { it.toResponse(id) }
     }
 }

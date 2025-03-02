@@ -62,4 +62,13 @@ class CharacterController(
 
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
+
+    @GetMapping("/opponents")
+    fun getOpponents(
+        @AuthenticationPrincipal account: AccountDetails
+    ): ResponseEntity<Any> {
+        val response = service.findOpponents(account.id)
+
+        return ResponseEntity.status(HttpStatus.OK).body(response)
+    }
 }
