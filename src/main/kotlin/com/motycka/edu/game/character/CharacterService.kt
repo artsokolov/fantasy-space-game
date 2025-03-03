@@ -4,6 +4,8 @@ import com.motycka.edu.game.account.model.AccountId
 import com.motycka.edu.game.character.exception.UnknownCharacterClass
 import com.motycka.edu.game.character.model.CharacterId
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
+import com.motycka.edu.game.character.rest.request.UpdateCharacterRequest
+import com.motycka.edu.game.character.rest.request.toProperties
 import com.motycka.edu.game.character.rest.response.CharacterResponse
 import com.motycka.edu.game.character.rest.response.toResponse
 import com.motycka.edu.game.generated.tables.GameCharacter
@@ -62,5 +64,20 @@ class CharacterService(
         return repository.findBy(
             NotEqualsCriteria(GameCharacter.GAME_CHARACTER.ACCOUNT_ID, id)
         ) { it.toResponse(id) }
+    }
+
+    fun updateCharacter(
+        id: CharacterId,
+        request: UpdateCharacterRequest
+    ) {
+        val character = repository.find(id).apply {
+            properties = request.toProperties(
+                accountId = properties.accountId,
+                level = properties.level,
+                experience = properties.experience
+            )
+        }
+
+        repository.update(id, character)
     }
 }

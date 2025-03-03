@@ -48,4 +48,15 @@ class CharacterRepository(
             ?.let { factory.restoreCharacter(it) }
             ?: throw CharacterNotFoundException("Character with id $id not found")
     }
+
+    fun update(id: CharacterId, character: Character) {
+        dsl.update(TABLE)
+            .set(character.toRecord())
+            .where(GameCharacter.GAME_CHARACTER.ID.eq(id))
+            .execute()
+    }
+
+    companion object {
+        private val TABLE = GameCharacter.GAME_CHARACTER
+    }
 }

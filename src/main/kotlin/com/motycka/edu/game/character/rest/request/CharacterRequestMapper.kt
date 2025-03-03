@@ -17,3 +17,20 @@ fun CreateCharacterRequest.toProperties(
     defensePower = defensePower,
     stamina = stamina
 )
+
+fun UpdateCharacterRequest.toProperties(
+    accountId: AccountId,
+    level: Int,
+    experience: Int
+): CharacterProperties = CharacterProperties(
+    name = name,
+    health = health,
+    attackPower = attackPower,
+    level = level,
+    experience = experience,
+    mana = mana,
+    healingPower = healingPower,
+    accountId = accountId,
+    defensePower = defensePower,
+    stamina = stamina
+)

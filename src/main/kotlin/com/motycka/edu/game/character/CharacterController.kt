@@ -2,6 +2,7 @@ package com.motycka.edu.game.character
 
 import com.motycka.edu.game.character.model.CharacterId
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
+import com.motycka.edu.game.character.rest.request.UpdateCharacterRequest
 import com.motycka.edu.game.config.AccountDetails
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -10,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -70,5 +72,15 @@ class CharacterController(
         val response = service.findOpponents(account.id)
 
         return ResponseEntity.status(HttpStatus.OK).body(response)
+    }
+
+    @PutMapping("/{id}")
+    fun putCharacter(
+        @PathVariable id: CharacterId,
+        @RequestBody request: UpdateCharacterRequest,
+    ): ResponseEntity<Any> {
+        service.updateCharacter(id, request)
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
