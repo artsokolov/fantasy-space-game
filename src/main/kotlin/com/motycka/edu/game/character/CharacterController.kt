@@ -1,6 +1,6 @@
 package com.motycka.edu.game.character
 
-import com.motycka.edu.game.character.model.CharacterId
+import com.motycka.edu.game.domain.entity.CharacterId
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
 import com.motycka.edu.game.character.rest.request.UpdateCharacterRequest
 import com.motycka.edu.game.config.AccountDetails
@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-/**
- * This is example of a controller class that handles HTTP requests for the account resource with service dependency injection.
- */
+
 @RestController
 @RequestMapping("/api/characters")
 class CharacterController(

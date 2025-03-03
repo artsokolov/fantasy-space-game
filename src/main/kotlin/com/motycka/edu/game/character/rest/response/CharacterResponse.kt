@@ -1,8 +1,7 @@
 package com.motycka.edu.game.character.rest.response
 
-import com.motycka.edu.game.account.model.AccountId
-import com.motycka.edu.game.character.model.CharacterId
-import com.motycka.edu.game.character.model.CharacterType
+import com.motycka.edu.game.domain.entity.CharacterId
+import com.motycka.edu.game.domain.valueobject.CharacterType
 
 data class CharacterResponse(
     val id: CharacterId,

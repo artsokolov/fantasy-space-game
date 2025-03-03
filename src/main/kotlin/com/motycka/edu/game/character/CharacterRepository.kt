@@ -1,25 +1,26 @@
 package com.motycka.edu.game.character
 
 import com.motycka.edu.game.character.database.toRecord
-import com.motycka.edu.game.character.model.Character
 import org.jooq.DSLContext
 import org.jooq.exception.DataException
 import org.springframework.stereotype.Repository
 import kotlin.jvm.Throws
 import com.motycka.edu.game.character.exception.CharacterCreationError
 import com.motycka.edu.game.character.exception.CharacterNotFoundException
-import com.motycka.edu.game.character.model.CharacterId
+import com.motycka.edu.game.domain.entity.AnyCharacter
+import com.motycka.edu.game.domain.entity.CharacterId
 import com.motycka.edu.game.generated.tables.GameCharacter
+import com.motycka.edu.game.domain.repository.CharacterRepositoryInterface
 import com.motycka.edu.game.shared.Criteria
 
 @Repository
 class CharacterRepository(
     private val dsl: DSLContext,
     private val factory: CharacterFactory
-) {
+): CharacterRepositoryInterface {
 
     @Throws(DataException::class)
-    fun create(character: Character): CharacterId {
+    override fun create(character: AnyCharacter): CharacterId {
         return dsl.insertInto(GameCharacter.GAME_CHARACTER)
             .set(character.toRecord())
             .returningResult(GameCharacter.GAME_CHARACTER.ID)
@@ -27,9 +28,9 @@ class CharacterRepository(
             ?.into(Long::class.java) ?: throw CharacterCreationError("Error during character creation")
     }
 
-    fun <T>findBy(
+    override fun <T>findBy(
         vararg filters: Criteria,
-        converter: (Character) -> T
+        converter: (AnyCharacter) -> T
     ): List<T> {
         return dsl.selectFrom(GameCharacter.GAME_CHARACTER)
             .where(
@@ -41,7 +42,8 @@ class CharacterRepository(
             }
     }
 
-    fun find(id: CharacterId): Character {
+    @Throws(CharacterNotFoundException::class)
+    override fun find(id: CharacterId): AnyCharacter {
         return dsl.selectFrom(GameCharacter.GAME_CHARACTER)
             .where(GameCharacter.GAME_CHARACTER.ID.eq(id))
             .fetchOne()
@@ -49,7 +51,7 @@ class CharacterRepository(
             ?: throw CharacterNotFoundException("Character with id $id not found")
     }
 
-    fun update(id: CharacterId, character: Character) {
+    override fun update(id: CharacterId, character: AnyCharacter) {
         dsl.update(TABLE)
             .set(character.toRecord())
             .where(GameCharacter.GAME_CHARACTER.ID.eq(id))

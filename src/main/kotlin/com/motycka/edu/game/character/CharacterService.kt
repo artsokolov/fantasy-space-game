@@ -2,12 +2,13 @@ package com.motycka.edu.game.character
 
 import com.motycka.edu.game.account.model.AccountId
 import com.motycka.edu.game.character.exception.UnknownCharacterClass
-import com.motycka.edu.game.character.model.CharacterId
+import com.motycka.edu.game.domain.entity.CharacterId
 import com.motycka.edu.game.character.rest.request.CreateCharacterRequest
 import com.motycka.edu.game.character.rest.request.UpdateCharacterRequest
 import com.motycka.edu.game.character.rest.request.toProperties
 import com.motycka.edu.game.character.rest.response.CharacterResponse
 import com.motycka.edu.game.character.rest.response.toResponse
+import com.motycka.edu.game.domain.valueobject.WarriorProperties
 import com.motycka.edu.game.generated.tables.GameCharacter
 import com.motycka.edu.game.shared.EqualsCriteria
 import com.motycka.edu.game.shared.NotEqualsCriteria
@@ -71,10 +72,14 @@ class CharacterService(
         request: UpdateCharacterRequest
     ) {
         val character = repository.find(id).apply {
-            properties = request.toProperties(
-                accountId = properties.accountId,
-                level = properties.level,
-                experience = properties.experience
+            levelUp(
+                request.name,
+                request.health,
+                request.attackPower,
+                request.stamina,
+                request.defensePower,
+                request.mana,
+                request.healingPower
             )
         }
 

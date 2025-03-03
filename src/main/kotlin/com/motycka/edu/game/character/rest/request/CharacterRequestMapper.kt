@@ -1,11 +1,13 @@
 package com.motycka.edu.game.character.rest.request
 
 import com.motycka.edu.game.account.model.AccountId
-import com.motycka.edu.game.character.model.CharacterProperties
+import com.motycka.edu.game.domain.valueobject.CharacterProperties
+import com.motycka.edu.game.domain.valueobject.CharacterType
 
 fun CreateCharacterRequest.toProperties(
-    accountId: AccountId
-): CharacterProperties = CharacterProperties(
+    accountId: AccountId,
+    type: CharacterType
+): CharacterProperties = CharacterProperties.new(
     name = name,
     health = health,
     attackPower = attackPower,
@@ -15,22 +17,6 @@ fun CreateCharacterRequest.toProperties(
     healingPower = healingPower,
     accountId = accountId,
     defensePower = defensePower,
-    stamina = stamina
-)
-
-fun UpdateCharacterRequest.toProperties(
-    accountId: AccountId,
-    level: Int,
-    experience: Int
-): CharacterProperties = CharacterProperties(
-    name = name,
-    health = health,
-    attackPower = attackPower,
-    level = level,
-    experience = experience,
-    mana = mana,
-    healingPower = healingPower,
-    accountId = accountId,
-    defensePower = defensePower,
-    stamina = stamina
+    stamina = stamina,
+    type = type
 )
